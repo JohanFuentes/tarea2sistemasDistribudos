@@ -26,14 +26,16 @@ var lista_nuevos_miembros = [];
 
 
 const ingreso = async () => {
-    const consumer = kafka.consumer({ groupId: 'ingreso', fromBeginning: true });
+    const consumer = kafka.consumer({ groupId: 'nuevosMiembros', fromBeginning: true });
     await consumer.connect();
-    await consumer.subscribe({ topic: 'ingreso' });
+    await consumer.subscribe({ topic: 'nuevosMiembros' });
     await consumer.run({
+        partitionsConsumedConcurrently: 2,
         eachMessage: async ({ topic, partition, message }) => {
             if (message.value){
                 var data = JSON.parse(message.value.toString());
                 lista_nuevos_miembros.push(data);
+                console.log({ topic, partition })
             }
         },
       })
