@@ -20,7 +20,7 @@ function eliminar(tiempos,carro,posiciones){
         if(diff > 60000){
             carro.delete(key);
             posiciones.delete(key);
-            console.log("Carro",key,"eliminado, por no enviar sus coordenadas.");
+            //console.log("Carro",key,"eliminado, por no enviar sus coordenadas.");
         } 
 
               });
