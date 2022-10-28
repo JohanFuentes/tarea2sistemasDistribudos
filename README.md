@@ -36,9 +36,66 @@ Para verificar que este creado usar:
 docker-compose exec kafka /opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
 ```
 
-## Rutas
+## Rutas Post
 
-### :3000/login
+### :3000/RegistroMiembro
+Metodo http que ingresa una orden de agregar a un miembro, recibe un body:
+
+Ejemplo:
+
+```json
+{
+    "nombre":"juan", 
+    "apellido":"valdes",
+    "rut":"92345678-9",
+    "correo":"juan@juan",
+    "patente":"2",
+    "premium": false
+}
+```
+Si el usuario es premium se envia por la particion 1 del topic "ingreso", si no es premium se ingresa por la particion 0 del topic "ingreso". Si es premium el proceso de validarlo y registrarlo es mas rapido. Cabe destacar que si un miembro quiere registrar un carro que ya fue registrado, la peticion sera rechazada.
+
+### :3000/RegistroVenta
+Metodo http que ingresa una venta, recibe un body:
+
+Ejemplo:
+
+```json
+{   
+    "patente":"2",
+    "cliente":"Juan", 
+    "cantidad_sopaipillas":"2",
+    "stock_restante":"2",
+    "coordenadas":"2,0,1" 
+}
+```
+Este registro de venta se envia a los topic:
+1. ventas: el cual crea estadisticas "una vez al dia", con estos registros. Los datos se envian de manera balanciada a ambas particiones del topic (0 y 1), de manera de balancear cargas, esto se hace a traves del metodo Round Robin.
+2. stock: el cual analiza el stock de cada carro, bajo 2 condiciones se mandan alertas, la primera es si el stock esta por debajo de cierta cantidad o si las ventas que haga son mayores a 5. Los datos se envian de manera balanciada a ambas particiones del topic (0 y 1), de manera de balancear cargas, esto se hace a traves del metodo Round Robin.
+3. avisos: el cual analiza la posicion de cada carro (coordenadas enviadas a traves de una venta) y la muestra por pantalla, en el caso de que un carro no envie sus coordenadas dentro de un minuto, ya no se imprimiran mas sus coordenadas por pantalla. Los datos son enviados a la particion 0 del topic, por esta particion se envian las coordenadas de los carritos que NO estan fugados.
+
+Cabe mencionar que el atributo "hora", se manda automaticamente en tiempo real, al realizar la peticion post.
+
+### :3000/AvisoAgenteExt
+Metodo http que ingresa la patente y coordenadas de un carrito en fuga, recibe un body:
+
+Ejemplo:
+
+```json
+{   
+    "patente":"1",
+    "coordenadas":"2,2,7" 
+}
+```
+Estos datos se envian al topic "avisos", a la particion 1 del topic. A traves de esta particion se alerta la presencia de un carrito en fuga, esta alerta se muestra por pantalla, mostrando la petente y coordenadas del carrito. 
+
+## Rutas Get
+
+### :5002/ingresoNuevosMiembros
+
+### :5001/ventas
+### :5004/stock
+### :5003/posicionCarritos
 
 Metodo http post que ingresa una orden, recibe un body:
 
