@@ -12,19 +12,9 @@ const kafka = new Kafka({
     brokers: [process.env.kafkaHost]
 });
 
-
-/*
-await producer.connect();
-await producer.send({
-    topic: 'ingreso',            //Ingreso Nuevos Miembros
-    messages: [{value: JSON.stringify(req.body)}]
-})
-*/
-
 var carro = new Set();
 var cantidad = new Map();
 var lista_stock = new Array;
-var stock = 50;
 
 const stock = async () => {
     const consumer = kafka.consumer({ groupId: 'stock', fromBeginning: true });
@@ -46,7 +36,7 @@ const stock = async () => {
                     var count = cantidad.get(data.patente);
                     count = count + 1;
                     cantidad.set(data.patente,count);
-                    if(count==5 || data.stock_restante<10){
+                    if(count==5 || parseInt(data.stock_restante)<10){
                         console.log('Carro ',data.patente,"necesita reponer Stock!");
                         cantidad.set(data.patente,0);
                     }

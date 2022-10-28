@@ -20,6 +20,7 @@ function eliminar(tiempos,carro,posiciones){
         if(diff > 60000){
             carro.delete(key);
             posiciones.delete(key);
+            console.log("Carro",key,"eliminado, por no enviar sus coordenadas.");
         } 
 
               });
@@ -34,24 +35,7 @@ function coordenadas(posiciones,particion){
             console.log("Carro Profugo!: ",key," => coordenadas: ",value);
         }
               });
-    /*      
-    if(carro.has(data.patente)){
-        posiciones.set(data.patente,data.coordenadas);
-        console.log("Carro: ",data.patente," => coordenadas: ",data.coordenadas);
-    }else{
-        carro.add(data.patente);
-        posiciones.set(data.patente,data.coordenadas);
-        console.log("Carro: ",data.patente," => coordenadas: ",data.coordenadas);
-    }*/
 }
-
-/*
-await producer.connect();
-await producer.send({
-    topic: 'ingreso',            //Ingreso Nuevos Miembros
-    messages: [{value: JSON.stringify(req.body)}]
-})
-*/
 
 var posiciones = new Map();
 var carro = new Set();
@@ -135,9 +119,6 @@ const avisos = async () => {
                     }
 
                 }
-
-                //let display = setInterval(coordenadas, 5000, posiciones);
-                //lista_posicion_carritos.push(data);
             }
         },
       })
