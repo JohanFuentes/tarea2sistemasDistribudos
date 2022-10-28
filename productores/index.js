@@ -94,9 +94,6 @@ app.post("/RegistroMiembro", async (req, res) => {
 app.post("/RegistroVenta", async (req, res) => {
 
     req.body.time = new Date().getTime();
-    //req.body.time = new Date().getTime();
-    //console.log(req.body.user, "/", req.body.pass, req.body.time);
-    //console.log(new Date(req.body.time).toLocaleDateString("es-CL"), new Date(req.body.time).toLocaleTimeString("es-CL"), req.body.user, "esta intentando ingresar.");
     await producer.connect();
 
     if(carrosRegistrados.has(req.body.patente)){

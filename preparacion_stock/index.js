@@ -24,6 +24,7 @@ await producer.send({
 var carro = new Set();
 var cantidad = new Map();
 var lista_stock = new Array;
+var stock = 50;
 
 const stock = async () => {
     const consumer = kafka.consumer({ groupId: 'stock', fromBeginning: true });
@@ -45,8 +46,8 @@ const stock = async () => {
                     var count = cantidad.get(data.patente);
                     count = count + 1;
                     cantidad.set(data.patente,count);
-                    if(count==5){
-                        console.log('Carro ',data.patente," necesita reponer Stock!");
+                    if(count==5 || data.stock_restante<10){
+                        console.log('Carro ',data.patente,"necesita reponer Stock!");
                         cantidad.set(data.patente,0);
                     }
                 }else{
@@ -54,9 +55,7 @@ const stock = async () => {
                     carro.add(data.patente);
                     cantidad.set(data.patente,count);
                 }
-                //lista_stock.push(data);
             }
-                //lista_stock.slice(0,lista_stock.length);
             },
         })
   }
