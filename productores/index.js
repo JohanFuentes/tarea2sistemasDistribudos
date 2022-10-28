@@ -57,30 +57,36 @@ app.post("/login", async (req, res) => {
 app.post("/RegistroMiembro", async (req, res) => {
     req.body.time = new Date().getTime();
     await producer.connect();
-    carrosRegistrados.add(req.body.patente);
-    if(req.body.premium){
-        await producer.send({
-            topic: 'ingreso',            //Ingreso Nuevos Miembros
-            messages: [{value: JSON.stringify(req.body),partition:1}]
-        })
+
+    if(!carrosRegistrados.has(req.body.patente)){
+
+        carrosRegistrados.add(req.body.patente);
+        if(req.body.premium){
+            await producer.send({
+                topic: 'ingreso',            //Ingreso Nuevos Miembros
+                messages: [{value: JSON.stringify(req.body),partition:1}]
+            })
+        }else{
+            await sleep(5000);
+            await producer.send({
+                topic: 'ingreso',            //Ingreso Nuevos Miembros
+                messages: [{value: JSON.stringify(req.body),partition:0}]
+            })
+        }
+
+        await producer.disconnect().then(
+            res.status(200).json({
+                nombre: req.body.nombre,
+                patente: req.body.patente
+            })
+        )
     }else{
-        await sleep(5000);
-        await producer.send({
-            topic: 'ingreso',            //Ingreso Nuevos Miembros
-            messages: [{value: JSON.stringify(req.body),partition:0}]
-        })
+        await producer.disconnect().then(
+            res.status(200).json({
+                error: "carro ya se encuentra registrado"
+            })
+        )
     }
-    //req.body.time = new Date().getTime();
-    //console.log(req.body.user, "/", req.body.pass, req.body.time);
-    //console.log(new Date(req.body.time).toLocaleDateString("es-CL"), new Date(req.body.time).toLocaleTimeString("es-CL"), req.body.user, "esta intentando ingresar.");
-    
-    
-    await producer.disconnect().then(
-        res.status(200).json({
-            nombre: req.body.nombre,
-            patente: req.body.patente
-        })
-    )
 });
 
 //Cliente, Cantidad de Sopaipillas, Hora, Stock_restante y coordenadas.
