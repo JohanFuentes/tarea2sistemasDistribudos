@@ -26,16 +26,29 @@ var lista_nuevos_miembros = [];
 
 
 const ingreso = async () => {
-    const consumer = kafka.consumer({ groupId: 'nuevosMiembros', fromBeginning: true });
+    const consumer = kafka.consumer({ groupId: 'ingreso', fromBeginning: true });
     await consumer.connect();
-    await consumer.subscribe({ topic: 'nuevosMiembros' });
+    await consumer.subscribe({ topic: 'ingreso' });
     await consumer.run({
         partitionsConsumedConcurrently: 2,
         eachMessage: async ({ topic, partition, message }) => {
+            var particion = JSON.parse(partition);
+
             if (message.value){
                 var data = JSON.parse(message.value.toString());
                 lista_nuevos_miembros.push(data);
-                console.log({ topic, partition })
+                if(particion==0){
+                    var tiempoActual = new Date().getTime();
+                    var diff = tiempoActual - data.time;
+                    console.log("Particion:",particion,"(miembro normal)");
+                    console.log("Nuevo registro de un miembro normal, tiempo en ser registrado:",diff/1000,"segundos.");
+                }else if(particion==1){
+                    var tiempoActual = new Date().getTime();
+                    var diff = tiempoActual - data.time;
+                    console.log("Particion:",particion,"(miembro premium)");
+                    console.log("Nuevo registro de un miembro premium, tiempo en ser registrado:",diff/1000,"segundos.");
+                }
+                
             }
         },
       })

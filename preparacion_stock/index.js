@@ -21,27 +21,51 @@ await producer.send({
 })
 */
 
-var white_list = new Map();
-var lista_stock = [];
+var carro = new Set();
+var cantidad = new Map();
+var lista_stock = new Array;
 
 const stock = async () => {
     const consumer = kafka.consumer({ groupId: 'stock', fromBeginning: true });
     await consumer.connect();
     await consumer.subscribe({ topic: 'stock' });
     await consumer.run({
+        partitionsConsumedConcurrently: 2,
         eachMessage: async ({ topic, partition, message }) => {
-            if (message.value){
+            var particion = JSON.parse(partition);
+            if(message.value){
+                if(particion==0){
+                    console.log("Particion:",particion,"(balanceo de cargas)");
+                }else if(particion==1){
+                    console.log("Particion:",particion,"(balanceo de cargas)");
+                }
                 var data = JSON.parse(message.value.toString());
-                lista_stock.push(data.stock_restante);
+
+                if(carro.has(data.patente)){
+                    var count = cantidad.get(data.patente);
+                    count = count + 1;
+                    cantidad.set(data.patente,count);
+                    if(count==5){
+                        console.log('Carro ',data.patente," necesita reponer Stock!");
+                        cantidad.set(data.patente,0);
+                    }
+                }else{
+                    var count = 1;
+                    carro.add(data.patente);
+                    cantidad.set(data.patente,count);
+                }
+                //lista_stock.push(data);
             }
-        },
-      })
-}
+                //lista_stock.slice(0,lista_stock.length);
+            },
+        })
+  }
 
 
 app.get("/stock", async (req, res) => {
-    res.status(200).json({"lista_stock": lista_stock});
+    res.status(200).json({"Stock": "función ejecutandose"});
 });
+
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
