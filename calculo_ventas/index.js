@@ -68,7 +68,7 @@ const carros = new Set();
 var registro = new Map();
 var resultados = new Map();
 
-setInterval(estadisticas, 3600000, registro, resultados, carros); //Número indica el tiempo en milisegundos 
+setInterval(estadisticas, 60000, registro, resultados, carros); //Número indica el tiempo en milisegundos 
 
 const ventasUno = async () => {
     const consumer = kafka.consumer({ groupId: 'ventas', fromBeginning: true });
