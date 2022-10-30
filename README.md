@@ -27,7 +27,7 @@ La arquitectura del Sistema se pueden resumir en la siguiente imagen:
 Ejecutamos con
 
 ```sh
-    docker-compose up -d --build # Se recomienda quitar el tag -d para ver los logs y el --build si no se desea rebuilder.
+    docker-compose up --build # Se recomienda quitar --build si no se desea rebuilder.
 ```
 
 ## Rutas Post
