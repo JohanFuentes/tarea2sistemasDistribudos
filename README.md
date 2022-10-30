@@ -1,4 +1,15 @@
-# Sistemas Distribuidos - Tarea 2
+
+### Descripción del sistema
+
+Sistema desarrollado en JavaScript, el cual nos permite gestionar los procesos internos del gremio sopaipillero de Chile a traves de Apache Kafka, la cual es una plataforma distribuida de transmisión de datos que permite publicar, almacenar y procesar flujos de registros, así como suscribirse a ellos, de forma inmediata. Está diseñada para administrar los flujos de datos de varias fuentes y distribuirlos a diversos usuarios.
+
+La arquitectura del Sistema se pueden resumir en la siguiente imagen:
+
+![Img](images/arq.png)
+
+### Enlace del vídeo del funcionamiento del Sistema
+
+[video](https://player.vimeo.com/video/765446652?h=408acc6a86&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479)
 
 En este repositorio tendremos el codigo y las instrucciones para ejecutar la tarea 2 de sistemas distribuidos, esta consiste en implementar un servicio api rest utilizando apache kafka como sistema de streaming de eventos, para efectos de nuestro proyecto utilizaremos nodejs y docker para lograr los objetivos.
 
