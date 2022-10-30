@@ -9,7 +9,7 @@ La arquitectura del Sistema se pueden resumir en la siguiente imagen:
 
 ### Enlace del vídeo del funcionamiento del Sistema
 
-[[video](images/vimeo.png)](https://player.vimeo.com/video/765446652?h=408acc6a86&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479)
+[![video](images/vimeo.png)](https://player.vimeo.com/video/765446652?h=408acc6a86&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479)
 
 En este repositorio tendremos el codigo y las instrucciones para ejecutar la tarea 2 de sistemas distribuidos, esta consiste en implementar un servicio api rest utilizando apache kafka como sistema de streaming de eventos, para efectos de nuestro proyecto utilizaremos nodejs y docker para lograr los objetivos.
 
