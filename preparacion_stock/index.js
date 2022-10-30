@@ -16,27 +16,22 @@ var carro = new Set();
 var cantidad = new Map();
 var lista_stock = new Array;
 
-const stock = async () => {
+const stockUno = async () => {
     const consumer = kafka.consumer({ groupId: 'stock', fromBeginning: true });
     await consumer.connect();
     await consumer.subscribe({ topic: 'stock' });
     await consumer.run({
-        partitionsConsumedConcurrently: 2,
         eachMessage: async ({ topic, partition, message }) => {
             var particion = JSON.parse(partition);
             if(message.value){
-                if(particion==0){
-                    console.log("Particion:",particion,"(balanceo de cargas)");
-                }else if(particion==1){
-                    console.log("Particion:",particion,"(balanceo de cargas)");
-                }
                 var data = JSON.parse(message.value.toString());
-
+                console.log("Particion:",particion,"(consumer 1 de stock)");
+                
                 if(carro.has(data.patente)){
                     var count = cantidad.get(data.patente);
                     count = count + 1;
                     cantidad.set(data.patente,count);
-                    if(count==5 || parseInt(data.stock_restante)<10){
+                    if(count==5 || parseInt(data.stock_restante)<20){
                         console.log('Carro ',data.patente,"necesita reponer Stock!");
                         cantidad.set(data.patente,0);
                     }
@@ -50,6 +45,34 @@ const stock = async () => {
         })
   }
 
+const stockDos = async () => {
+    const consumer = kafka.consumer({ groupId: 'stock', fromBeginning: true });
+    await consumer.connect();
+    await consumer.subscribe({ topic: 'stock' });
+    await consumer.run({
+        eachMessage: async ({ topic, partition, message }) => {
+            var particion = JSON.parse(partition);
+            if(message.value){
+                var data = JSON.parse(message.value.toString());
+                console.log("Particion:",particion,"(consumer 2 de stock)");
+                
+                if(carro.has(data.patente)){
+                    var count = cantidad.get(data.patente);
+                    count = count + 1;
+                    cantidad.set(data.patente,count);
+                    if(count==5 || parseInt(data.stock_restante)<20){
+                        console.log('Carro ',data.patente,"necesita reponer Stock!");
+                        cantidad.set(data.patente,0);
+                    }
+                }else{
+                    var count = 1;
+                    carro.add(data.patente);
+                    cantidad.set(data.patente,count);
+                }
+            }
+            },
+        })
+  }
 
 app.get("/stock", async (req, res) => {
     res.status(200).json({"Stock": "función ejecutandose"});
@@ -58,5 +81,6 @@ app.get("/stock", async (req, res) => {
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
-    stock();
+    stockUno();
+    stockDos();
 });
